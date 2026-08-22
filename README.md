@@ -4,10 +4,17 @@ An evidence-oriented map of software, simulators, research code, and technical
 communities working on **Wi-Fi 7 (IEEE 802.11be, Extremely High Throughput)**
 and **Wi-Fi 8 (IEEE 802.11bn, Ultra High Reliability)**.
 
-> **Research snapshot:** 11 August 2026. “Open source” here means that source
+> **Research snapshot:** 22 August 2026. “Open source” here means that source
 > code is publicly available under an identifiable open-source licence. A
 > public paper, standards page, firmware image, product SDK, or issue tracker
 > alone is not counted as an open-source implementation.
+
+## What's new
+
+- Added Komondor v4/Kom8ndor, which implements 802.11bn-oriented multi-AP
+  coordination, dynamic subband operation, and non-primary channel access.
+- Added the JAXWiFi ecosystem for reproducible, learning-based coordinated
+  spatial-reuse experiments and its commodity-hardware Co-SR testbed.
 
 ## How to read this list
 
@@ -117,6 +124,9 @@ need especially careful qualification.
 
 | Project | Type | What exists now | Maturity warning |
 |---|---|---|---|
+| [Komondor / Kom8ndor](https://github.com/wn-upf/Komondor) | Simulator | Event-driven 802.11bn-oriented simulator with Co-TDMA, coordinated spatial reuse, coordinated beamforming, dynamic subband operation, and non-primary channel access. Version 4 is the first Kom8ndor release; the code includes build instructions, examples, regression tests, and a GPL-3.0 licence. | The older core was validated against ns-3 and analytical models, but each newly added 11bn mechanism still requires feature-specific validation. It is a research simulator, not draft-conformance or interoperability evidence. |
+| [JAXWiFi / `ml4wifi-devs`](https://github.com/ml4wifi-devs) ([interactive demo](https://github.com/ml4wifi-devs/mapc-demo)) | Research ecosystem | Reproducible JAX-based coordinated-spatial-reuse simulation plus hierarchical bandits, optimization bounds, metaheuristics, GNN surrogates, generative scheduling, DCF/SR baselines, and a browser comparison tool. The individual repositories expose code, tests or examples under CC0-1.0. | Models the 802.11bn multi-AP coordination problem rather than the complete amendment. Results depend on the TGax-derived channel abstraction, selected scheduler, and exact revisions of the component repositories. |
+| [`mapc-testbed`](https://github.com/ml4wifi-devs/mapc-testbed) | Research testbed | Commodity AR9271-based coordinated-spatial-reuse platform that moves timed frame release into open ath9k_htc firmware, aligns distributed AP transmissions using TSF, and measures delivery, timing error, and signal strength. | Uses older 802.11n-class 2.4 GHz radios to study a future MAPC mechanism. It demonstrates real over-the-air coordination behavior, not a Wi-Fi 8 PHY, complete 802.11bn MAC, or certified device. |
 | [ns-3 mainline Wi-Fi](https://gitlab.com/nsnam/ns-3-dev/-/tree/master/src/wifi) | Simulator foundation | The open place most likely to receive reviewed 802.11bn models. Existing EHT/MLO, channel, interference, queueing, roaming, and multi-AP scenario machinery provides a baseline for UHR research. Follow [Wi-Fi issues](https://gitlab.com/nsnam/ns-3-dev/-/issues/?label_name%5B%5D=wifi) and release notes for features that actually land. | **Not a complete 802.11bn model.** Do not relabel an EHT scenario as Wi-Fi 8. A result is 11bn-specific only when it implements a defined UHR mechanism and documents assumptions. |
 | [Linux wireless-next](https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git/) | Production-development foundation | Upstream staging point for future `cfg80211`/`mac80211` and driver changes. Current MLO/EHT infrastructure is the practical starting point for experiments that may become 11bn. | **No claim of complete Wi-Fi 8 support.** Early patches, vendor features, or an “11bn” constant do not constitute interoperability. |
 | [hostap development tree](https://w1.fi/cgit/hostap/) | Production-development foundation | Natural userspace home for future UHR negotiation, AP coordination/control, and enhanced MLO behavior as kernel interfaces and specifications stabilize. | **No claim of complete Wi-Fi 8 support.** Track commits and mailing-list review rather than product announcements. |
