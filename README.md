@@ -4,12 +4,30 @@ An evidence-oriented map of software, simulators, research code, and technical
 communities working on **Wi-Fi 7 (IEEE 802.11be, Extremely High Throughput)**
 and **Wi-Fi 8 (IEEE 802.11bn, Ultra High Reliability)**.
 
-> **Research snapshot:** 22 August 2026. “Open source” here means that source
+> **Research snapshot:** 6 November 2026. “Open source” here means that source
 > code is publicly available under an identifiable open-source licence. A
 > public paper, standards page, firmware image, product SDK, or issue tracker
 > alone is not counted as an open-source implementation.
 
 ## What's new
+
+### November 2026
+
+- **Linux:** initial IEEE 802.11bn (UHR) support has reached mainline
+  `mac80211`/`cfg80211`. [`net/mac80211/uhr.c`](https://github.com/torvalds/linux/blob/master/net/mac80211/uhr.c)
+  parses peer UHR capabilities, and follow-up series on linux-wireless add
+  `mac80211_hwsim` UHR test support and draft elements such as DPS, DBE, and
+  P-EDCA. All of it follows draft amendment text and will change with it.
+- **hostapd:** most of a UHR patch series was applied in May 2026 behind the
+  `CONFIG_IEEE80211BN` build option, using IEEE P802.11bn/D1.4 element
+  definitions. hwsim test cases are held back until the kernel side is upstream.
+- **OpenWrt 25.12:** the stable series (first released 5 March 2026; 25.12.6 on
+  18 October 2026) brings MediaTek MT7996/MT7992 MLO link fixes and per-link
+  beacon monitoring. 25.12.6 also fixes a hostapd/wpa_supplicant MLO parsing
+  flaw that unauthenticated frames could trigger.
+- Added the Kom8ndor paper (arXiv 2606.25435) to the Komondor entry.
+
+### August 2026
 
 - Added Komondor v4/Kom8ndor, which implements 802.11bn-oriented multi-AP
   coordination, dynamic subband operation, and non-primary channel access.
@@ -46,12 +64,12 @@ ns-3.
 
 | Project | Type | What is relevant to Wi-Fi 7 | Practical caveats |
 |---|---|---|---|
-| [Linux wireless (`mac80211`, `cfg80211`, `nl80211`)](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/wireless) | Production | Shared upstream EHT/MLO data structures, channel definitions, station/link handling, and userspace API used by Wi-Fi 7 drivers. [Source tree](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/nl80211.h) and [wireless-next development tree](https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git/). | Capability depends on the driver and usually closed device firmware. Use wireless-next to study development and a released kernel for deployment. |
+| [Linux wireless (`mac80211`, `cfg80211`, `nl80211`)](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/net/wireless) | Production | Shared upstream EHT/MLO data structures, channel definitions, station/link handling, and userspace API used by Wi-Fi 7 drivers. [Source tree](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/uapi/linux/nl80211.h) and [wireless-next development tree](https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git/). | Capability depends on the driver and usually closed device firmware. Use wireless-next to study development and a released kernel for deployment. Initial 802.11bn (UHR) code is now in mainline; see the Wi-Fi 8 section. |
 | [ath12k](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/wireless/ath/ath12k) | Production | Upstream Qualcomm Wi-Fi 7-class PCI/AHB driver; EHT, 6 GHz, and ongoing MLO work use the common Linux wireless stack. Development is reviewed on [linux-wireless](https://lore.kernel.org/linux-wireless/). | Host driver is GPL, but required board data and device firmware are separate; chipset and kernel support varies. |
 | [MediaTek `mt76`](https://github.com/openwrt/mt76) | Production | GPL driver family used by OpenWrt and Linux; the `mt7996` code supports EHT-capable MediaTek hardware and is a particularly accessible route for router experiments. [Upstream Linux copy](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/wireless/mediatek/mt76/mt7996). | Firmware remains a separate binary and the OpenWrt mirror may move ahead of or behind a kernel release. |
 | [Intel `iwlwifi`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/wireless/intel/iwlwifi) | Production | Open host driver for Intel adapters, with EHT definitions and support for applicable Wi-Fi 7 generations. Intel also publishes the [backport-iwlwifi](https://github.com/intel/backport-iwlwifi) development/backport tree. | Firmware is redistributable binary, not open source; exact EHT/MLO capability is adapter and firmware dependent. |
 | [hostapd / wpa_supplicant](https://w1.fi/hostapd/) ([official git](https://w1.fi/cgit/hostap/)) | Production | Reference open userspace AP/authenticator and station/supplicant. EHT capability/configuration and MLO control are developed here and exposed through drivers such as `nl80211`. | Supporting configuration syntax is not proof that a driver/firmware combination implements it. Check the git version rather than an old distribution package. |
-| [OpenWrt](https://github.com/openwrt/openwrt) | Production distribution | Integrates Linux, `mac80211`, hostapd, drivers, regulatory data, and router configuration. Its [packages](https://github.com/openwrt/openwrt/tree/main/package/network) and build system make reproducible Wi-Fi 7 AP testbeds possible on supported targets. | OpenWrt is integration rather than a new 802.11be MAC/PHY. Hardware support and acceleration can require vendor components. |
+| [OpenWrt](https://github.com/openwrt/openwrt) | Production distribution | Integrates Linux, `mac80211`, hostapd, drivers, regulatory data, and router configuration. Its [packages](https://github.com/openwrt/openwrt/tree/main/package/network) and build system make reproducible Wi-Fi 7 AP testbeds possible on supported targets. | OpenWrt is integration rather than a new 802.11be MAC/PHY. Hardware support and acceleration can require vendor components. The 25.12 stable series is the current baseline for MediaTek Wi-Fi 7/MLO testbeds, and 25.12.6 (October 2026) carries a security fix for MLO element parsing in hostapd/wpa_supplicant. |
 | [Linux wireless regulatory database](https://git.kernel.org/pub/scm/linux/kernel/git/wens/wireless-regdb.git/) | Enabling infrastructure | Open regulatory rules consumed by Linux/CRDA tooling, essential when testing 6 GHz and 320 MHz operation legally. | It does not implement Wi-Fi 7 and cannot override local law, AFC requirements, or hardware restrictions. |
 | [Open AFC](https://github.com/open-afc-project/openafc) | Enabling infrastructure | Open automated-frequency-coordination system for standard-power 6 GHz devices; relevant to outdoor/high-power Wi-Fi 7 deployments in AFC regimes. | AFC is a spectrum-access service, not an 802.11be implementation, and deployment rules are jurisdiction-specific. |
 
@@ -124,12 +142,12 @@ need especially careful qualification.
 
 | Project | Type | What exists now | Maturity warning |
 |---|---|---|---|
-| [Komondor / Kom8ndor](https://github.com/wn-upf/Komondor) | Simulator | Event-driven 802.11bn-oriented simulator with Co-TDMA, coordinated spatial reuse, coordinated beamforming, dynamic subband operation, and non-primary channel access. Version 4 is the first Kom8ndor release; the code includes build instructions, examples, regression tests, and a GPL-3.0 licence. | The older core was validated against ns-3 and analytical models, but each newly added 11bn mechanism still requires feature-specific validation. It is a research simulator, not draft-conformance or interoperability evidence. |
+| [Komondor / Kom8ndor](https://github.com/wn-upf/Komondor) ([paper](https://arxiv.org/abs/2606.25435)) | Simulator | Event-driven 802.11bn-oriented simulator with Co-TDMA, coordinated spatial reuse, coordinated beamforming, dynamic subband operation, and non-primary channel access. Version 4 is the first Kom8ndor release; the code includes build instructions, examples, regression tests, and a GPL-3.0 licence. | The older core was validated against ns-3 and analytical models, but each newly added 11bn mechanism still requires feature-specific validation. It is a research simulator, not draft-conformance or interoperability evidence. |
 | [JAXWiFi / `ml4wifi-devs`](https://github.com/ml4wifi-devs) ([interactive demo](https://github.com/ml4wifi-devs/mapc-demo)) | Research ecosystem | Reproducible JAX-based coordinated-spatial-reuse simulation plus hierarchical bandits, optimization bounds, metaheuristics, GNN surrogates, generative scheduling, DCF/SR baselines, and a browser comparison tool. The individual repositories expose code, tests or examples under CC0-1.0. | Models the 802.11bn multi-AP coordination problem rather than the complete amendment. Results depend on the TGax-derived channel abstraction, selected scheduler, and exact revisions of the component repositories. |
 | [`mapc-testbed`](https://github.com/ml4wifi-devs/mapc-testbed) | Research testbed | Commodity AR9271-based coordinated-spatial-reuse platform that moves timed frame release into open ath9k_htc firmware, aligns distributed AP transmissions using TSF, and measures delivery, timing error, and signal strength. | Uses older 802.11n-class 2.4 GHz radios to study a future MAPC mechanism. It demonstrates real over-the-air coordination behavior, not a Wi-Fi 8 PHY, complete 802.11bn MAC, or certified device. |
 | [ns-3 mainline Wi-Fi](https://gitlab.com/nsnam/ns-3-dev/-/tree/master/src/wifi) | Simulator foundation | The open place most likely to receive reviewed 802.11bn models. Existing EHT/MLO, channel, interference, queueing, roaming, and multi-AP scenario machinery provides a baseline for UHR research. Follow [Wi-Fi issues](https://gitlab.com/nsnam/ns-3-dev/-/issues/?label_name%5B%5D=wifi) and release notes for features that actually land. | **Not a complete 802.11bn model.** Do not relabel an EHT scenario as Wi-Fi 8. A result is 11bn-specific only when it implements a defined UHR mechanism and documents assumptions. |
-| [Linux wireless-next](https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git/) | Production-development foundation | Upstream staging point for future `cfg80211`/`mac80211` and driver changes. Current MLO/EHT infrastructure is the practical starting point for experiments that may become 11bn. | **No claim of complete Wi-Fi 8 support.** Early patches, vendor features, or an “11bn” constant do not constitute interoperability. |
-| [hostap development tree](https://w1.fi/cgit/hostap/) | Production-development foundation | Natural userspace home for future UHR negotiation, AP coordination/control, and enhanced MLO behavior as kernel interfaces and specifications stabilize. | **No claim of complete Wi-Fi 8 support.** Track commits and mailing-list review rather than product announcements. |
+| [Linux wireless-next](https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git/) | Production-development foundation | Upstream staging point for future `cfg80211`/`mac80211` and driver changes. Mainline now carries initial UHR capability handling (`net/mac80211/uhr.c`), and wireless-next series add `mac80211_hwsim` UHR support, DPS/DBE/P-EDCA element definitions, and Seamless Mobility Domain work based on P802.11bn drafts. | **No claim of complete Wi-Fi 8 support.** Early patches, vendor features, or an “11bn” constant do not constitute interoperability. |
+| [hostap development tree](https://w1.fi/cgit/hostap/) | Production-development foundation | Userspace home for UHR negotiation, AP coordination/control, and enhanced MLO behavior. A first UHR patch series was largely applied in May 2026 behind `CONFIG_IEEE80211BN`, using P802.11bn/D1.4 definitions; see the [hostap list thread](http://lists.infradead.org/pipermail/hostap/2026-May/045188.html). | **No claim of complete Wi-Fi 8 support.** Track commits and mailing-list review rather than product announcements. |
 
 **Bottom line:** there is not yet a broadly accepted, production-ready,
 end-to-end open-source Wi-Fi 8 stack comparable to the Linux + hostapd Wi-Fi 7
